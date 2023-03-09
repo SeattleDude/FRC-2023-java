@@ -1,0 +1,18 @@
+ax 0: left x
+ax 1: left y
+ax 2: left trigger
+ax 3: right trigger
+ax 4: right x
+ax 5: right y
+POV 0: d-pad
+
+b1: A
+b2: B
+b3: X
+b4: Y
+b5: left bumper
+b6: right bumper
+b7: back btn
+b8: start btn
+b9: left stick in
+b10: right stick in
