@@ -65,9 +65,7 @@ public class Robot extends TimedRobot {
     //System.out.println(-m_driver.getLeftY() + " Left stick val\n"); // I put a - in front of the y val to invert 
     //System.out.println(-m_driver.getRightY() + " Right stick val\n"); // so forward is positive and back is neg, 
                                             // this is inverse to the actual values that are input in the GUI
-  
-    System.out.println("Coding in java sucks");
-                                          }
+  }
 
   /** This function is called once each time the robot enters test mode. */
   @Override
