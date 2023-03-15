@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
+// import frc.robot.slowMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,6 +24,8 @@ public class Robot extends TimedRobot {
   private final XboxController m_driver = new XboxController(0); // init a controller (Joystick) object that is on USB port 0
   // private final Joystick m_operator = new Joystick(1); // another for the operator of the system
   private final Timer m_timer = new Timer();
+  public static slowMode SlowMode = slowMode.OFF;
+  // private boolean slowMode;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -61,10 +64,16 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
+    if (m_driver.getStartButton()) {
+      SlowMode = SlowMode == slowMode.ON ? slowMode.OFF : slowMode.ON;
+    }
+    if (SlowMode == slowMode.OFF) {
     m_robotDrive.tankDrive(m_driver.getLeftY(), m_driver.getRightY());
     //System.out.println(-m_driver.getLeftY() + " Left stick val\n"); // I put a - in front of the y val to invert 
     //System.out.println(-m_driver.getRightY() + " Right stick val\n"); // so forward is positive and back is neg, 
-                                            // this is inverse to the actual values that are input in the GUI
+    // this is inverse to the actual values that are input in the GUI
+    }
+    m_robotDrive.tankDrive(m_driver.getLeftY() / 2, m_driver.getRightY() / 2); //  div by 2 to get half speed
   }
 
   /** This function is called once each time the robot enters test mode. */
