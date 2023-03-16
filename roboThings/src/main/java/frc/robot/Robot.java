@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+
+import java.text.DecimalFormat;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -36,7 +39,10 @@ public class Robot extends TimedRobot {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    m_rightDrive.setInverted(true);
+    m_leftDrive.setInverted(true); // I set the left side to be inverted, this should fix the driving backwards with forwards input problem
+
+    //CameraServer.getServer(UsbCamera(0)) // TODO need to figure out how to stream from a camera on the robot
+
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -60,6 +66,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
   public void teleopInit() {}
+  DecimalFormat df = new DecimalFormat("#.#");
 
   /** This function is called periodically during teleoperated mode. */
   @Override
@@ -68,7 +75,12 @@ public class Robot extends TimedRobot {
       SlowMode = SlowMode == slowMode.ON ? slowMode.OFF : slowMode.ON;
     }
     if (SlowMode == slowMode.OFF) {
-    m_robotDrive.tankDrive(m_driver.getLeftY(), m_driver.getRightY());
+
+      double leftY = m_driver.getLeftY();
+      double rightY = m_driver.getRightY();
+
+      m_robotDrive.tankDrive(-leftY * 5, -rightY * 5);
+
     //System.out.println(-m_driver.getLeftY() + " Left stick val\n"); // I put a - in front of the y val to invert 
     //System.out.println(-m_driver.getRightY() + " Right stick val\n"); // so forward is positive and back is neg, 
     // this is inverse to the actual values that are input in the GUI
