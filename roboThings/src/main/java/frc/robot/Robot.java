@@ -8,11 +8,14 @@ import edu.wpi.first.wpilibj.XboxController;
 
 import java.text.DecimalFormat;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
-// import frc.robot.slowMode;
+
+import static frc.robot.slowModeEnums.*;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -27,7 +30,7 @@ public class Robot extends TimedRobot {
   private final XboxController m_driver = new XboxController(0); // init a controller (Joystick) object that is on USB port 0
   // private final Joystick m_operator = new Joystick(1); // another for the operator of the system
   private final Timer m_timer = new Timer();
-  public static slowMode SlowMode = slowMode.OFF;
+  public static slowModeEnums SlowMode = OFF; // init slowmode to off
   // private boolean slowMode;
 
   /**
@@ -42,6 +45,8 @@ public class Robot extends TimedRobot {
     m_leftDrive.setInverted(true); // I set the left side to be inverted, this should fix the driving backwards with forwards input problem
 
     //CameraServer.getServer(UsbCamera(0)) // TODO need to figure out how to stream from a camera on the robot
+
+    CameraServer.startAutomaticCapture(0); // this should fix the problem with no camera feed
 
   }
 
@@ -66,26 +71,33 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
   public void teleopInit() {}
+
   DecimalFormat df = new DecimalFormat("#.#");
+
+  boolean startPressed = false; // init as false for sureness (that's a word)
 
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    if (m_driver.getStartButton()) {
-      SlowMode = SlowMode == slowMode.ON ? slowMode.OFF : slowMode.ON;
-    }
-    if (SlowMode == slowMode.OFF) {
 
-      double leftY = m_driver.getLeftY();
-      double rightY = m_driver.getRightY();
+    boolean startPressed = m_driver.getStartButtonPressed();
 
-      m_robotDrive.tankDrive(-leftY * 5, -rightY * 5);
+    double leftY = m_driver.getLeftY(); // get inputs from sticks
+    double rightY = m_driver.getRightY();
+
+    if (startPressed) {
+      SlowMode = ON;
+      m_robotDrive.tankDrive(m_driver.getLeftY() / 2, m_driver.getRightY() / 2); //  div by 2 to get half speed for slow mode
+    } else {
+
+
+      m_robotDrive.tankDrive(leftY, rightY, false);  // might still cause a backwards problem, We'll see; it did, fixed? WOOOOOOOOOOOO IT WORKSSSSSSS
+      // the squared inputs are set to true by default it seems... hopefully this fixes the slowness problem
 
     //System.out.println(-m_driver.getLeftY() + " Left stick val\n"); // I put a - in front of the y val to invert 
     //System.out.println(-m_driver.getRightY() + " Right stick val\n"); // so forward is positive and back is neg, 
-    // this is inverse to the actual values that are input in the GUI
+    // this is inverse to the actual values that are input in the GUI // this might be the reason that the robot was driving backwards?
     }
-    m_robotDrive.tankDrive(m_driver.getLeftY() / 2, m_driver.getRightY() / 2); //  div by 2 to get half speed
   }
 
   /** This function is called once each time the robot enters test mode. */
