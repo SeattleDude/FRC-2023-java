@@ -5,10 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 import java.text.DecimalFormat;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -58,6 +60,15 @@ public class Robot extends TimedRobot {
 
   }
 
+  @Override
+  public void robotPeriodic() {
+    if (DriverStation.getAlliance() == Alliance.Red) {            // This code here should make the LED strips turn 
+      m_prettyLights.set(0.61);                             // the same color as the alliance color
+    } else if (DriverStation.getAlliance() == Alliance.Blue) {
+      m_prettyLights.set(0.87);
+    }
+  }
+
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
@@ -88,8 +99,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    boolean startPressed = m_driver.getStartButtonPressed();
-    boolean backPressed = m_driver.getBackButtonPressed();
+    boolean rightBumpPressed = m_driver.getRightBumperPressed();
+    boolean leftBumpPressed = m_driver.getLeftBumperPressed();
 
     double leftY = m_driver.getLeftY(); // get inputs from sticks
     double rightY = m_driver.getRightY();
@@ -134,11 +145,11 @@ public class Robot extends TimedRobot {
     m_UpperDowner.set(OPLeftY); // go up or down based on the input given from the operator joysticks, might need to be reversed; it does
     System.out.println("inner Outer move! [OP]" + OPLeftY);
 
-    if (startPressed) {
+    if (rightBumpPressed) {
       SlowMode = ON;
       m_robotDrive.tankDrive(m_driver.getLeftY() / 2, m_driver.getRightY() / 2); //  div by 2 to get half speed for slow mode
       System.out.println("Slowmode Active!");
-    } else if (backPressed) {
+    } else if (leftBumpPressed) {
       SlowMode = OFF;
       m_robotDrive.tankDrive(leftY, rightY, false);  // might still cause a backwards problem, We'll see; it did, fixed? WOOOOOOOOOOOO IT WORKSSSSSSS
       // the squared inputs are set to true by default it seems... hopefully this fixes the slowness problem
