@@ -108,8 +108,8 @@ public class Robot extends TimedRobot {
     // arm operator control inputs
     double OPLeftY = m_operator.getLeftY(); // get left input for arm operator (Add the axis on the bot this corresponds to)
     double OPRightY = m_operator.getRightY(); // get right input for arm operator
-    double OPLeftTrig = m_operator.getLeftTriggerAxis(); // in control for arm
-    double OPRightTrig = m_operator.getRightTriggerAxis(); // out control for arm
+    boolean OPLeftTrig = m_operator.getAButton(); // in control for arm
+    boolean OPRightTrig = m_operator.getYButton(); // out control for arm
 
     boolean leftPressed = false; // init val for if the triggers are pressed
     boolean rightPressed = false;
@@ -118,20 +118,26 @@ public class Robot extends TimedRobot {
     m_UpperDowner.setInverted(true);
 
     
-    if (OPLeftTrig > 0.1) {
-      leftPressed = true;
-      System.out.println("left trig pressed [OP]");
-    } else if (OPRightTrig > 0.1) {
-      rightPressed = true;
-      System.out.println("right trig pressed [OP]");
-    }
+    // if (OPLeftTrig > 0.8) {
+    //   leftPressed = true;
+    //   System.out.println("left trig pressed [OP]");
+    // } else if (OPRightTrig > 0.8) {
+    //   rightPressed = true;
+    //   System.out.println("right trig pressed [OP]");
+    // } else {
+    //   leftPressed = false;
+    //   rightPressed = false;
+    //   System.out.println("Neither Trigger is pressed [OP]");
+    // }
 
-    if (leftPressed) {
-      m_grabber.set(-OPLeftTrig); // make grabber retract
+    if (OPRightTrig) {
+      m_grabber.set(-1); // make grabber retract
       System.out.println("Making grabber retract! [OP]");
-    } else if (rightPressed) {
-      m_grabber.set(OPRightTrig); // make grabber extend
+    } else if (OPLeftTrig) {
+      m_grabber.set(1); // make grabber extend
       System.out.println("Making grabber Grab (Extend)! [OP]");
+    } else {
+      m_grabber.set(0);
     }
 
 
@@ -142,7 +148,7 @@ public class Robot extends TimedRobot {
     m_innerOuter.set(OPRightY * 0.66); // set the inner and outer motor to move according to the operator input
     System.out.println("inner Outer move! [OP]" + OPRightY * 0.66); // divide by 2 on the signal sent to slow the movement
 
-    m_UpperDowner.set(OPLeftY); // go up or down based on the input given from the operator joysticks, might need to be reversed; it does
+    m_UpperDowner.set(-OPLeftY); // go up or down based on the input given from the operator joysticks, might need to be reversed; it does
     System.out.println("inner Outer move! [OP]" + OPLeftY);
 
     if (rightBumpPressed) {
